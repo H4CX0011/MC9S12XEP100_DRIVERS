@@ -13,12 +13,14 @@
 /* type define */
 typedef struct
 {
-    word RealTimeIntEn  :1; /* 1:enable, 0:disable */
-    word SysClockSel    :1; /* 1:PLLCLK, 0:OSCCLK */
-    word BusClock       :8; /* set bus clock, unit MHz */
+    dword bRealTimeIntEn   :1; /* 1:enable, 0:disable */
+    dword bSysClockSel     :1; /* 1:PLLCLK, 0:OSCCLK */
+    dword u8OscClock       :8; /* OSC clock */
+    dword u8RefClock       :8; /* set reference clock */
+    dword u8BusClock       :8; /* set bus clock, unit MHz */
 }ClockConfigType, *ClockConfigTypePtr;
 
-
+void Clock_Init( ClockConfigType *pConfig );
 
 #endif
 /* end _CLOCK_H_ */

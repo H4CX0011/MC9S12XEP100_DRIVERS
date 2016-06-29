@@ -1,176 +1,127 @@
 /******************************************************************************
- * @file clock.c														     
- *																		 
- * @version v0.01														 
- * 																		 
- * @date May, 20, 2016 													 
- *																		 
- * @brief Clock module source file.  									 
- *****************************************************************************/
+* @file clock.c														     
+*																		 
+* @version v0.01														 
+* 																		 
+* @date May, 20, 2016 													 
+*																		 
+* @brief Clock module source file.  									 
+******************************************************************************/
 #include "headers.h"
 
-/* Clock module register APIs */
 /******************************************************************************
- * @brief  Enable Real Time Interrupt														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_RealTimeIntEnable( void )
+* @brief  Clock_IPLLOn - IPLL is turned on.													     
+*																		 
+* @param  none														 
+* 																		 
+* @return	none												 																		   									 
+******************************************************************************/
+void Clock_IPLL_On( void )
 {
-    CRGINT_RTIE = 1;    
+    PLLCTL_PLLON = 1;    
 }
 /******************************************************************************
- * @brief  Disable Real Time Interrupt														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_RealTimeIntDisable( void )
+* @brief  Clock_IPLLOff - IPLL is turned off.													     
+*																		 
+* @param  none														 
+* 																		 
+* @return	none												 																		   									 
+******************************************************************************/
+void Clock_IPLL_Off( void )
 {
-    CRGINT_RTIE = 0;    
+    PLLCTL_PLLON = 0;    
 }
 /******************************************************************************
- * @brief  Enable Lock Interrupt														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_LockIntEnable( void )
+* @brief  Clock_OSC_Enable - System clocks are derived from OSCCLK
+*                            (fBUS = fOSC / 2)													     
+*																		 
+* @param  none														 
+* 																		 
+* @return	none												 																		   									 
+******************************************************************************/
+void Clock_OSC_Enable( void )
 {
-    CRGINT_LOCKIE = 1;    
-}
+    CLKSEL_PLLSEL = 0;    
+} 
 /******************************************************************************
- * @brief  Disable Lock Interrupt														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_LockIntDisable( void )
+* @brief  Clock_OSC_Enable - System clocks are derived from PLLCLK
+*                            (fBUS = fPLL / 2)													     
+*																		 
+* @param  none														 
+* 																		 
+* @return	none												 																		   									 
+******************************************************************************/
+void Clock_PLL_Enable( void )
 {
-    CRGINT_LOCKIE = 0;    
-}
+    CLKSEL_PLLSEL = 1;    
+} 
 /******************************************************************************
- * @brief  Enable self clock mode interrupt														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_SelfClkIntEnable( void )
-{
-    CRGINT_SCMIE = 1;    
-}
-/******************************************************************************
- * @brief  Disable self clock mode interrupt														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_SelfClkIntDisable( void )
-{
-    CRGINT_SCMIE = 0;    
-}
-/******************************************************************************
- * @brief  Configure system clock														     
- *																		 
- * @param[in]  *pConfig pointer to user configure struct														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_SysClkConfig( ClockConfigType *pConfig )
-{
-    if( pConfig->SysClockSel )
-    {
-        CLKSEL_PLLSEL = 1;  /* System clocks fBUS = fPLL / 2 */
-    }
-    else
-    {
-        CLKSEL_PLLSEL = 0;  /* System clocks fBUS = fOSC / 2 */ 
-    }
-}
-/******************************************************************************
- * @brief  IPLL keeps running in Wait Mode														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_IPLLWaitEnable( void )
-{
-    CLKSEL_PLLWAI = 0;   
-}
-/******************************************************************************
- * @brief  IPLL stops in Wait Mode														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_IPLLWaitDisable( void )
-{
-    CLKSEL_PLLWAI = 1;   
-}
-/******************************************************************************
- * @brief  Real Time Interrupt keeps running in Wait Mode														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_RTIWaitEnable( void )
-{
-    CLKSEL_RTIWAI = 0;   
-}
-/******************************************************************************
- * @brief  Real Time Interrupt stops in Wait Mode														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_RTIWaitDisable( void )
-{
-    CLKSEL_RTIWAI = 1;   
-}
-/******************************************************************************
- * @brief  COP keeps running in Wait Mode														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_COPWaitEnable( void )
-{
-    CLKSEL_COPWAI = 0;   
-}
-/******************************************************************************
- * @brief  COP stops in Wait Mode														     
- *																		 
- * @param  none														 
- * 																		 
- * @return	none												 																		   									 
- *****************************************************************************/
-void Clock_COPWaitDisable( void )
-{
-    CLKSEL_COPWAI = 1;   
-}
-void Init_PLL_Clock (void)
+* @brief  Clock_Init - Initialize system clock.													     
+*																		 
+* @param  *pConfig  Pointer to clok configure struct.														 
+* 																		 
+* @return	none												 																		   									 
+******************************************************************************/
+void Clock_Init( ClockConfigType *pConfig )
 {   
-  /*set to 48M HZ, 16M crystal*/ 
-  PLLCTL = 0B10000001;  //CME=1,PLLON=0,FM1=0,FM2=0,FSTWKP=0,PRE=0,PCE=0,SCME=1
-  CLKSEL = 0B00000011;  //PLLSEL=0,PSTP=0,PLLWAI=0,RTIWAI=1,COPWAI=1
-  SYNR = 0xC2;          //Set the multiplier register
-  REFDV = 0xC0;        //Set the divider register
-  POSTDIV = 0x00;       //Set the post divider register
-  PLLCTL |= PLLCTL_PLLON_MASK;  //Enable the Phase Lock Loop 
+    byte fBUS;
+    byte fREF;
+    byte fPLL;
+    byte fVCO;
+    byte fOSC;
+    
+    fOSC = (byte)pConfig->u8OscClock;
+    fBUS = (byte)pConfig->u8BusClock;
+    fREF = (byte)pConfig->u8RefClock;
+    
+    Clock_IPLL_Off();    /* Disable the Phase Lock Loop */
+    Clock_OSC_Enable();
+    //CLKSEL = 0B00000011;  //PLLSEL=0,PSTP=0,PLLWAI=0,RTIWAI=1,COPWAI=1
+        
+    /* Configure REFDV register. The REFDV register provides a finer 
+       granularity for the IPLL multiplier steps. */
+    if( (fREF >= 1) && (fREF <= 2) ) {
+        REFDV_REFFRQ = 0;
+    }
+    else if( (fREF > 2) && (fREF <= 6) ) {
+        REFDV_REFFRQ = 1;
+    }
+    else if( (fREF > 6) && (fREF <= 12) ) {
+        REFDV_REFFRQ = 2;
+    }
+    else if( fREF > 12 ) {
+        REFDV_REFFRQ = 3;
+    }
+    REFDV_REFDIV = fBUS / fREF - 1;
+    
+    /* The POSTDIV register controls the frequency ratio between the VCOCLK
+       and PLLCLK. */	
+    POSTDIV = 0x00;
+    
+    /* Configure SYNDR register.The SYNR register controls the multiplication
+       factor of the IPLL and selects the VCO frequency range. */
+    fPLL = 2 * fBUS;
+    if( !POSTDIV ) {
+        fVCO = fPLL;  
+    }
+    else {
+        fVCO = 2 * POSTDIV * fPLL;
+    }
+    
+    if( (fVCO >= 32) && (fVCO <= 48) ) {
+        SYNR_VCOFRQ = 0;
+    }
+    else if( (fVCO > 48) && (fVCO <= 80) ) {
+        SYNR_VCOFRQ = 1;
+    } 
+    else if( (fVCO > 80) && (fVCO <= 120) ) {
+        SYNR_VCOFRQ = 3;
+    }
+    SYNR_SYNDIV = fVCO / (2*fOSC) * (REFDV_REFDIV+1) - 1;
+  
+    Clock_IPLL_On();  /* Enable the Phase Lock Loop */ 
      
-  //Wait till the PLL VCO is within tolerance
-  while((CRGFLG & CRGFLG_LOCK_MASK) == 0);      
-  CLKSEL |= CLKSEL_PLLSEL_MASK; //system clocks are derived from PLLCLK  
+    /* Wait till the PLL VCO is within tolerance */
+    while((CRGFLG & CRGFLG_LOCK_MASK) == 0);      
+    CLKSEL |= CLKSEL_PLLSEL_MASK; //system clocks are derived from PLLCLK  
 }
