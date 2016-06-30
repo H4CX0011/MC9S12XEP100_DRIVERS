@@ -17,6 +17,8 @@
 
 /* driver header files */
 #include "clock.h"
+#include "pit.h"
+#include "sci.h"
 
 
 
